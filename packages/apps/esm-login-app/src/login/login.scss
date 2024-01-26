@@ -5,7 +5,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: relative;
 }
 
 .center {
@@ -28,6 +27,8 @@
   text-align: center;
   color: $color-gray-70;
   color: $text-02;
+  padding-left: 2rem;
+  padding-bottom: 1rem;
 }
 
 .need-help {
@@ -138,9 +139,33 @@
 }
 
 .errorMessage {
-  width: 23rem;
   margin-bottom: 3rem;
-  position: absolute;
-  bottom: 100%;
-  left: 0;
+  width: 23rem;
+}
+
+.myLogos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.version-txt {
+  margin-top: 2rem;
+  padding-left: 2rem;
+}
+
+.powered-by-logo {
+  width: 100px; 
+  height: 40px; 
+}
+
+.footerLogos {
+  display: flex;
+  justify-content: space-between;
+}
+
+.partnerLogos {  
+  img {
+    width: 60px;
+  }
 }

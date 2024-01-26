@@ -1,9 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import classNames from 'classnames';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, InlineLoading, InlineNotification, PasswordInput, TextInput, Tile } from '@carbon/react';
 import { ArrowLeft, ArrowRight } from '@carbon/react/icons';
 import { useTranslation } from 'react-i18next';
-import type { Session } from '@openmrs/esm-framework';
 import {
   useConfig,
   interpolateUrl,
@@ -13,6 +14,7 @@ import {
   getSessionStore,
   useConnectivity,
   navigate as openmrsNavigate,
+  type Session,
 } from '@openmrs/esm-framework';
 import { performLogin } from '../login.resource';
 import styles from './login.scss';
@@ -123,7 +125,7 @@ const Login: React.FC<LoginProps> = () => {
         continueLogin();
         return false;
       }
-
+            
       try {
         setIsLoggingIn(true);
         const loginRes = await performLogin(username, password);
@@ -155,25 +157,29 @@ const Login: React.FC<LoginProps> = () => {
       <use xlinkHref="#omrs-logo-full-color"></use>
     </svg>
   );
+  const partnerLogoImgs = config?.partnerLogos?.map((eachItem, index) => {
+    return <img src={eachItem} alt="renders logo" width="40px" />;
+  });
+  // eslint-disable-next-line no-console
+  console.log('Partner Logos:', config);
 
   if (config.provider.type === 'basic') {
-    return (
-      <div className={styles.container}>
+    return (                    
+      <div className={classNames('canvas', styles['container'])}>
+        {errorMessage && (
+          <InlineNotification
+            className={styles.errorMessage}
+            kind="error"
+            /**
+             * This comment tells i18n to still keep the following translation keys (used as value for: errorMessage):
+             * t('invalidCredentials')
+             */
+            subtitle={t(errorMessage)}
+            title={t('error', 'Error')}
+            onClick={() => setErrorMessage('')}
+          />
+        )}
         <Tile className={styles['login-card']}>
-          {errorMessage && (
-            <div className={styles.errorMessage}>
-              <InlineNotification
-                kind="error"
-                /**
-                 * This comment tells i18n to still keep the following translation keys (used as value for: errorMessage):
-                 * t('invalidCredentials')
-                 */
-                subtitle={t(errorMessage)}
-                title={t('error', 'Error')}
-                onClick={() => setErrorMessage('')}
-              />
-            </div>
-          )}
           {showPasswordOnSeparateScreen && showPassword ? (
             <div className={styles['back-button-div']}>
               <Button
@@ -269,19 +275,28 @@ const Login: React.FC<LoginProps> = () => {
             )}
           </form>
         </Tile>
+        {config.showVersionNumber && (
+          <p className={styles["powered-by-txt"]}>
+            Version {config.appVersion}
+          </p>
+        )}
+
         <div className={styles['footer']}>
-          <p className={styles['powered-by-txt']}>{t('poweredBy', 'Powered by')}</p>
-          <div>
+          <p className={styles['powered-by-txt']}>
+            {t('poweredBy', 'Powered by')}</p>
+          <div className={styles.footerLogos}>
             <svg role="img" className={styles['powered-by-logo']}>
               <use xlinkHref="#omrs-logo-partial-mono"></use>
             </svg>
+            {config.partnerLogos && (
+            <div className={styles.partnerLogos}>{partnerLogoImgs}</div>
+          )}
           </div>
         </div>
       </div>
     );
   }
-
   return null;
-};
+}
 
 export default Login;
