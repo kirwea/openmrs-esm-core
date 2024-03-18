@@ -13,6 +13,7 @@ import {
 } from '@openmrs/esm-framework';
 import { type ConfigSchema } from '../config-schema';
 import styles from './login.scss';
+import { config } from 'rxjs';
 
 export interface LoginReferrer {
   referrer?: string;
@@ -147,6 +148,18 @@ const Login: React.FC = () => {
     [showPassword, username, password, navigate],
   );
 
+  const logo = config.logo.src ? (
+    <img src={interpolateUrl(config.logo.src)} alt={config.logo.alt} className={styles['logo-img']} />
+  ) : (
+    <svg role="img" className={styles['logo']}>
+      <title>OpenMRS logo</title>
+      <use xlinkHref="#omrs-logo-full-color"></use>
+    </svg>
+  );
+  const partnerLogoImgs = config?.partnerLogos?.map((eachItem, index) => {
+    return <img src={eachItem} alt="renders logo" width="40px" />;
+  });
+
   if (!loginProvider || loginProvider.type === 'basic') {
     return (
       <div className={styles.container}>
@@ -258,13 +271,23 @@ const Login: React.FC = () => {
             )}
           </form>
         </Tile>
+        {config.showVersionNumber && (
+          <p className={styles["powered-by-txt"]}>
+            Version {config.appVersion}
+          </p>
+        )}
+
         <div className={styles['footer']}>
-          <p className={styles['powered-by-txt']}>{t('poweredBy', 'Powered by')}</p>
+          <p className={styles['powered-by-txt']}>
+            {t('poweredBy', 'Powered by')}</p>
           <div>
             <svg role="img" className={styles['powered-by-logo']}>
               <use xlinkHref="#omrs-logo-partial-mono"></use>
             </svg>
           </div>
+          {config.partnerLogos && (
+            <div className={styles.partnerLogos}>{partnerLogoImgs}</div>
+          )}
         </div>
       </div>
     );
